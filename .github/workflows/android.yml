@@ -29,3 +29,24 @@ jobs:
     
     - name: Build WireGuard Android
       run: ./gradlew assembleRelease
+
+    - name: Generate signing key
+      run: |
+        keytool -genkeypair -v -keystore release.keystore -alias wireguard -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=WireGuard, OU=Android, O=WireGuard, L=City, S=State, C=US"
+    
+    - name: Sign APK
+      run: |
+        jarsigner -verbose -keystore release.keystore -storepass password -keypass password app/build/outputs/apk/release/app-release-unsigned.apk wireguard
+    
+    - name: Align and Verify APK
+      run: |
+        ./gradlew zipalign
+        ./gradlew verifyApk
+    
+    - name: Upload Signed APK to GitHub Releases
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: app/build/outputs/apk/release/app-release-unsigned.apk
+        asset_name: wireguard-release-signed.apk
+        asset_content_type: application/vnd.android.package-archive
