@@ -36,7 +36,9 @@ jobs:
     
     - name: Align APK
       run: |
-        ./gradlew zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
+        ./gradlew assembleRelease
+        zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
+        find ui/build/outputs/apk/release
     
     - name: Sign APK
       run: |
