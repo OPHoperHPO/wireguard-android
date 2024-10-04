@@ -51,7 +51,7 @@ jobs:
 
     - name: List build output directories
       run: |
-        ls -la && ls -la app/build/ && ls -la app/build/outputs/ && ls -la app/build/outputs/apk && ls -la app/build/outputs/apk/release
+        find ./app/build
 
     - name: Generate signing key
       run: |
