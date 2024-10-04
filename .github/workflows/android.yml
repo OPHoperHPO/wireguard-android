@@ -51,7 +51,7 @@ jobs:
 
     - name: List build output directories
       run: |
-        find ./app/build
+        find ./
 
     - name: Generate signing key
       run: |
