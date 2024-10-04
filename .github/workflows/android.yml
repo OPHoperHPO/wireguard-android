@@ -44,11 +44,33 @@ jobs:
     - name: Sign APK
       run: |
         jarsigner -verbose -keystore release.keystore -storepass password -keypass password ui/build/outputs/apk/release/ui-release-aligned.apk wireguard
+    - name: Find
+      run: find ./ui
+   
+    - name: Increment version
+      id: increment_version
+      run: |
+        IFS='.' read -r major minor patch <<< "${{ env.tag#v }}"
+        new_patch=$((patch + 1))
+        new_version="v$major.$minor.$new_patch"
+        echo "New version: $new_version"
+        echo "new_version=$new_version" >> $GITHUB_ENV
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.new_version }}
+        release_name: "Release ${{ env.new_version }}"
+        draft: false
+        prerelease: false
     
     - name: Upload Signed APK to GitHub Releases
       uses: actions/upload-release-asset@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ui/build/outputs/apk/release/ui-release-aligned.apk
         asset_name: ui-release-signed.apk
         asset_content_type: application/vnd.android.package-archive
