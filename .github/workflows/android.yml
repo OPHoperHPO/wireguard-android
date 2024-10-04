@@ -23,12 +23,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
-
     
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     
-
     - name: Build WireGuard Android
       run: ./gradlew assembleRelease
 
@@ -42,7 +40,7 @@ jobs:
     
     - name: Sign APK
       run: |
-        ./gradlew jarsigner -verbose -keystore release.keystore -storepass password -keypass password ui/build/outputs/apk/release/ui-release-aligned.apk wireguard
+        jarsigner -verbose -keystore release.keystore -storepass password -keypass password ui/build/outputs/apk/release/ui-release-aligned.apk wireguard
     
     - name: Verify Signed APK
       run: |
