@@ -42,9 +42,13 @@ jobs:
       run: |
         zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
 
-    - name: Sign APK
+    - name: Sign APK with apksigner
       run: |
-        jarsigner -verbose -keystore release.keystore -storepass password -keypass password ui/build/outputs/apk/release/ui-release-aligned.apk wireguard
+        apksigner sign --ks release.keystore --ks-key-alias wireguard --ks-pass pass:password --key-pass pass:password --out ui/build/outputs/apk/release/ui-release-signed.apk ui/build/outputs/apk/release/ui-release-aligned.apk
+
+    - name: Verify APK Signature
+      run: |
+        apksigner verify ui/build/outputs/apk/release/ui-release-signed.apk
 
     - name: Increment version
       id: increment_version
@@ -65,7 +69,6 @@ jobs:
         git tag ${{ env.new_version }}
         git push origin ${{ env.new_version }}
 
-
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -83,6 +86,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ui/build/outputs/apk/release/ui-release-aligned.apk
+        asset_path: ui/build/outputs/apk/release/ui-release-signed.apk
         asset_name: ui-release-signed.apk
         asset_content_type: application/vnd.android.package-archive
