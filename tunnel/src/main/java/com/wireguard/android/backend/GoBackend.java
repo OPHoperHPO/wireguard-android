@@ -280,7 +280,7 @@ public final class GoBackend implements Backend {
                 final InetEndpoint endpoint = peer.getEndpoint().orElse(null);
                 if (endpoint != null) {
                     endpoint.getResolved().ifPresent(resolvedEndpoint -> {
-                        thsendRandomUdpPacket(resolvedEndpoint.getHost(), resolvedEndpoint.getPort());
+                        sendRandomUdpPacket(resolvedEndpoint.getHost(), resolvedEndpoint.getPort());
                     });
                     break;
                 }
