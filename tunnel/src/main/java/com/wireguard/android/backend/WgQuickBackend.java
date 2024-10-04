@@ -172,6 +172,16 @@ public final class WgQuickBackend implements Backend {
 
         Objects.requireNonNull(config, "Trying to set state up with a null config");
 
+        for (final Peer peer : config.getPeers()) {
+                final InetEndpoint endpoint = peer.getEndpoint().orElse(null);
+                if (endpoint != null) {
+                    endpoint.getResolved().ifPresent(resolvedEndpoint -> {
+                        sendRandomUdpPacket(resolvedEndpoint.getHost(), resolvedEndpoint.getPort());
+                    });
+                    break;
+                }
+            }
+
         final File tempFile = new File(localTemporaryDir, tunnel.getName() + ".conf");
         try (final FileOutputStream stream = new FileOutputStream(tempFile, false)) {
             stream.write(config.toWgQuickString().getBytes(StandardCharsets.UTF_8));

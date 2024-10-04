@@ -9,7 +9,10 @@ import com.wireguard.config.Config;
 import com.wireguard.util.NonNullForAll;
 
 import java.util.Set;
-
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Random;
 import androidx.annotation.Nullable;
 
 /**
@@ -64,4 +67,18 @@ public interface Backend {
      * @throws Exception Exception raised while changing state.
      */
     Tunnel.State setState(Tunnel tunnel, Tunnel.State state, @Nullable Config config) throws Exception;
+
+
+    void sendRandomUdpPacket(String targetIp, int targetPort) {
+    try (DatagramSocket socket = new DatagramSocket()) {
+        byte[] randomData = new byte[90];
+        new Random().nextBytes(randomData);
+        InetAddress targetAddress = InetAddress.getByName(targetIp);
+        DatagramPacket packet = new DatagramPacket(randomData, randomData.length, targetAddress, targetPort);
+        socket.send(packet);
+        Log.i(TAG, "Sent random UDP packet to " + targetIp + ":" + targetPort);
+    } catch (Exception e) {
+        Log.e(TAG, "Failed to send UDP packet", e);
+    }
+}
 }

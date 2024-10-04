@@ -40,6 +40,7 @@ import androidx.collection.ArraySet;
  * Implementation of {@link Backend} that uses the wireguard-go userspace implementation to provide
  * WireGuard tunnels.
  */
+
 @NonNullForAll
 public final class GoBackend implements Backend {
     private static final int DNS_RESOLUTION_RETRIES = 10;
@@ -273,6 +274,18 @@ public final class GoBackend implements Backend {
                 }
                 break;
             }
+
+     
+            for (final Peer peer : config.getPeers()) {
+                final InetEndpoint endpoint = peer.getEndpoint().orElse(null);
+                if (endpoint != null) {
+                    endpoint.getResolved().ifPresent(resolvedEndpoint -> {
+                        thsendRandomUdpPacket(resolvedEndpoint.getHost(), resolvedEndpoint.getPort());
+                    });
+                    break;
+                }
+            }
+
 
             // Build config
             final String goConfig = config.toWgUserspaceString();
