@@ -38,15 +38,15 @@ jobs:
     
     - name: Align APK
       run: |
-        zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
+        ./gradlew zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
     
     - name: Sign APK
       run: |
-        jarsigner -verbose -keystore release.keystore -storepass password -keypass password ui/build/outputs/apk/release/ui-release-aligned.apk wireguard
+        ./gradlew jarsigner -verbose -keystore release.keystore -storepass password -keypass password ui/build/outputs/apk/release/ui-release-aligned.apk wireguard
     
     - name: Verify Signed APK
       run: |
-        apksigner verify ui/build/outputs/apk/release/ui-release-aligned.apk
+        ./gradlew apksigner verify ui/build/outputs/apk/release/ui-release-aligned.apk
     
     - name: Upload Signed APK to GitHub Releases
       uses: actions/upload-release-asset@v1
