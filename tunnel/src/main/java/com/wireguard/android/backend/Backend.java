@@ -14,6 +14,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Random;
 import androidx.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Interface for implementations of the WireGuard secure network tunnel.
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 
 @NonNullForAll
 public interface Backend {
+    String TAG = "Meow";
     /**
      * Enumerate names of currently-running tunnels.
      *
@@ -69,16 +71,16 @@ public interface Backend {
     Tunnel.State setState(Tunnel tunnel, Tunnel.State state, @Nullable Config config) throws Exception;
 
 
-    void sendRandomUdpPacket(String targetIp, int targetPort) {
-    try (DatagramSocket socket = new DatagramSocket()) {
-        byte[] randomData = new byte[90];
-        new Random().nextBytes(randomData);
-        InetAddress targetAddress = InetAddress.getByName(targetIp);
-        DatagramPacket packet = new DatagramPacket(randomData, randomData.length, targetAddress, targetPort);
-        socket.send(packet);
-        Log.i(TAG, "Sent random UDP packet to " + targetIp + ":" + targetPort);
-    } catch (Exception e) {
-        Log.e(TAG, "Failed to send UDP packet", e);
+    default void sendRandomUdpPacket(String targetIp, int targetPort) {
+        try (DatagramSocket socket = new DatagramSocket()) {
+            byte[] randomData = new byte[90];
+            new Random().nextBytes(randomData);
+            InetAddress targetAddress = InetAddress.getByName(targetIp);
+            DatagramPacket packet = new DatagramPacket(randomData, randomData.length, targetAddress, targetPort);
+            socket.send(packet);
+            Log.i(TAG, "Sent random UDP packet to " + targetIp + ":" + targetPort);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to send UDP packet", e);
+        }
     }
-}
 }
