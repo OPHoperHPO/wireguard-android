@@ -29,6 +29,8 @@ jobs:
     
     - name: Build WireGuard Android
       run: ./gradlew assembleRelease
+    - name: ls
+      run: ls -la && ls -la app/build/ && ls -la app/build/outputs/ && ls -la app/build/outputs/apk && && ls -la app/build/outputs/apk/release
 
     - name: Generate signing key
       run: |
