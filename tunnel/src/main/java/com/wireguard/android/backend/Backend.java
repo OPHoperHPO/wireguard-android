@@ -71,14 +71,14 @@ public interface Backend {
     Tunnel.State setState(Tunnel tunnel, Tunnel.State state, @Nullable Config config) throws Exception;
 
 
-    default void sendRandomUdpPacket(String targetIp, int targetPort) {
-        try (DatagramSocket socket = new DatagramSocket()) {
+    default void sendRandomUdpPacket(String targetIp, int targetPort, int sourcePort) {
+        try (DatagramSocket socket = new DatagramSocket(sourcePort)) {
             byte[] randomData = new byte[90];
             new Random().nextBytes(randomData);
             InetAddress targetAddress = InetAddress.getByName(targetIp);
             DatagramPacket packet = new DatagramPacket(randomData, randomData.length, targetAddress, targetPort);
             socket.send(packet);
-            Log.i(TAG, "Sent random UDP packet to " + targetIp + ":" + targetPort);
+            Log.i(TAG, "Sent random UDP packet from port " + sourcePort + " to " + targetIp + ":" + targetPort);
         } catch (Exception e) {
             Log.e(TAG, "Failed to send UDP packet", e);
         }
