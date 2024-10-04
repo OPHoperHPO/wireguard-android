@@ -33,21 +33,21 @@ jobs:
     - name: Generate signing key
       run: |
         keytool -genkeypair -v -keystore release.keystore -alias wireguard -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=WireGuard, OU=Android, O=WireGuard, L=City, S=State, C=US"
-        
+    
+    - name: Install Build Tools
+      run: sudo apt-get install -y zipalign apksigner
+    
     - name: Align APK
       run: |
-        ./gradlew zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
-    - name: LSfiles
-      run: |
-        find ./ui
-  
+        zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
+    
     - name: Sign APK
       run: |
         jarsigner -verbose -keystore release.keystore -storepass password -keypass password ui/build/outputs/apk/release/ui-release-aligned.apk wireguard
     
     - name: Verify Signed APK
       run: |
-        ./gradlew apksigner verify ui/build/outputs/apk/release/ui-release-aligned.apk
+        apksigner verify ui/build/outputs/apk/release/ui-release-aligned.apk
     
     - name: Upload Signed APK to GitHub Releases
       uses: actions/upload-release-asset@v1
