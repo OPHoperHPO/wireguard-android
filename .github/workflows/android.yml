@@ -33,13 +33,14 @@ jobs:
     - name: Generate signing key
       run: |
         keytool -genkeypair -v -keystore release.keystore -alias wireguard -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=WireGuard, OU=Android, O=WireGuard, L=City, S=State, C=US"
-    
+        
     - name: Align APK
       run: |
-        ./gradlew assembleRelease
-        zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
-        find ui/build/outputs/apk/release
-    
+        ./gradlew zipalign -v 4 ui/build/outputs/apk/release/ui-release-unsigned.apk ui/build/outputs/apk/release/ui-release-aligned.apk
+    - name: LSfiles
+      run: |
+        find ./ui
+  
     - name: Sign APK
       run: |
         jarsigner -verbose -keystore release.keystore -storepass password -keypass password ui/build/outputs/apk/release/ui-release-aligned.apk wireguard
