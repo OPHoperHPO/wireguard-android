@@ -16,6 +16,9 @@ import com.wireguard.android.util.ToolsInstaller;
 import com.wireguard.config.Config;
 import com.wireguard.crypto.Key;
 import com.wireguard.util.NonNullForAll;
+import com.wireguard.config.Config;
+import com.wireguard.config.InetEndpoint;
+import com.wireguard.config.Peer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -173,14 +176,14 @@ public final class WgQuickBackend implements Backend {
         Objects.requireNonNull(config, "Trying to set state up with a null config");
 
         for (final Peer peer : config.getPeers()) {
-                final InetEndpoint endpoint = peer.getEndpoint().orElse(null);
-                if (endpoint != null) {
-                    endpoint.getResolved().ifPresent(resolvedEndpoint -> {
-                        sendRandomUdpPacket(resolvedEndpoint.getHost(), resolvedEndpoint.getPort());
-                    });
-                    break;
-                }
+            final InetEndpoint endpoint = peer.getEndpoint().orElse(null);
+            if (endpoint != null) {
+                endpoint.getResolved().ifPresent(resolvedEndpoint -> {
+                    sendRandomUdpPacket(resolvedEndpoint.getHost(), resolvedEndpoint.getPort());
+                });
+                break;
             }
+        }
 
         final File tempFile = new File(localTemporaryDir, tunnel.getName() + ".conf");
         try (final FileOutputStream stream = new FileOutputStream(tempFile, false)) {
