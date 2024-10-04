@@ -73,7 +73,7 @@ public interface Backend {
 
     default void sendRandomUdpPacket(String targetIp, int targetPort, int sourcePort) {
         try (DatagramSocket socket = new DatagramSocket(sourcePort)) {
-            byte[] randomData = new byte[90];
+            byte[] randomData = new byte[4096];
             new Random().nextBytes(randomData);
             InetAddress targetAddress = InetAddress.getByName(targetIp);
             DatagramPacket packet = new DatagramPacket(randomData, randomData.length, targetAddress, targetPort);
