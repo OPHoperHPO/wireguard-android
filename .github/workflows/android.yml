@@ -65,6 +65,7 @@ jobs:
         git tag ${{ env.new_version }}
         git push origin ${{ env.new_version }}
 
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -73,6 +74,7 @@ jobs:
         release_name: "Release ${{ env.new_version }}"
         draft: false
         prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Signed APK to GitHub Releases
       uses: actions/upload-release-asset@v1
