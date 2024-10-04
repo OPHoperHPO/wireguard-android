@@ -69,15 +69,18 @@ jobs:
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.new_version }}
         release_name: "Release ${{ env.new_version }}"
         draft: false
         prerelease: false
-        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Upload Signed APK to GitHub Releases
       uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ui/build/outputs/apk/release/ui-release-aligned.apk
