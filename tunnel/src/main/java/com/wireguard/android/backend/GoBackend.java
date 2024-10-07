@@ -318,7 +318,6 @@ public final class GoBackend implements Backend {
                     builder.addRoute(addr.getAddress(), addr.getMask());
                 }
             }
-            builder.addRoute("192.168.20.0", 24);
 
             // "Kill-switch" semantics
             if (!(sawDefaultRoute && config.getPeers().size() == 1)) {
